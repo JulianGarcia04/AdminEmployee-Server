@@ -3,5 +3,6 @@ export interface IModel<data, messages> {
     getOne(id:string):Promise<data>
     create(data:data):Promise<messages>
     editOne(id:string, data:data):Promise<messages>
-    login?(data:data):Promise<boolean>
+    deleteOne(id:string, data:data):Promise<messages>
+    login?(data:data):Promise<data>
 }

@@ -20,7 +20,6 @@ class EmployeeController
   ): Promise<void> {
     try {
       const { limit, skip } = req.query;
-      console.log(req.query);
       const data = await employee.getAll(Number(limit), Number(skip));
       res.status(200).json(data);
     } catch (error) {
@@ -40,15 +39,24 @@ class EmployeeController
       next(error);
     }
   }
+  async getCurrent(req: IRequestHandler, res: IResponseHandler, next: INext): Promise<void> {
+    try {
+      const userId = req.employeeId;
+      const data = await employee.getOne(userId);
+      res.status(200).json(data);
+    } catch (error) {
+      next(error)
+    }
+  }
   async create(
     req: IRequestHandler,
     res: IResponseHandler,
     next: INext
   ): Promise<void> {
     try {
-      const { name, lastname } = req.body;
-      const data = await employee.create({ id: v4(), name, lastname });
-      res.status(202).json(data);
+      const { name, lastname, email, password, role } = req.body;
+      const data = await employee.create({ id: v4(), name, lastname, email, password, role });
+      res.status(data.status).json(data);
     } catch (error) {
       next(error);
     }
@@ -62,10 +70,20 @@ class EmployeeController
       const { id } = req.params;
       const body = req.body;
       const data = await employee.editOne(id, body);
-      res.status(200).json(data);
+      res.status(data.status).json(data);
     } catch (error) {
       next(error);
     }
+  }
+
+  async deleteOne(req: IRequestHandler, res: IResponseHandler, next: INext): Promise<void> {
+      try {
+        const {id} = req.params;
+        const data = await employee.deleteOne(id,{isDelete: true});
+        res.status(data.status).json(data);
+      } catch (error) {
+        next(error)
+      }
   }
 
   async login(
@@ -74,21 +92,13 @@ class EmployeeController
     next: INext
   ): Promise<void> {
     try {
-      const {name, password} = req.body;
-      const data = await employee.login({name, password})
-      jwt.sign('hola mundo', config.SECRET!)
+      const {email, password} = req.body;
+      const data = await employee.login({email, password})
+      const token = jwt.sign({id:data.id, role: data.role}, config.SECRET!, {
+        expiresIn: 60*60*8
+      })
+      res.setHeader('Authorization', token)
       res.status(200).json({status:200, message:"the user is authenticate"} as IResponseMessage)
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async logout(
-    req: IRequestHandler,
-    res: IResponseHandler,
-    next: INext
-  ): Promise<void> {
-    try {
     } catch (error) {
       next(error);
     }

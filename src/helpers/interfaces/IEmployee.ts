@@ -2,8 +2,10 @@ export interface IEmployee{
     id?:string,
     name?:string,
     lastname?:string,
+    email?:string,
     role?:string,
     state?:boolean,
     dateCreate?:Date,
-    password?:string
+    password?:string,
+    isDelete?:boolean
 }
