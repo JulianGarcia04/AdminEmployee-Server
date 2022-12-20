@@ -12,7 +12,7 @@ export const errorHandler:ErrorRequestHandler = (err, req, res, next)=>{
 }
 
 export const formatError:ErrorRequestHandler = (err, req, res, next)=>{
-    return res.json({
+    return res.status(err.status | 500).json({
         message: err?.message,
         stack : err?.stack
     })
