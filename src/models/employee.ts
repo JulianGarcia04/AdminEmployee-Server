@@ -32,7 +32,7 @@ class EmployeeModel implements IModel<IEmployee, IResponseMessage> {
   }
   async getOne(id: string): Promise<IEmployee> {
     try {
-      const data = await Employee.findOne({ id });
+      const data = await Employee.findOne({ id, isDelete:false });
       if (!data) {
         throw {
           status: 401,
@@ -47,7 +47,7 @@ class EmployeeModel implements IModel<IEmployee, IResponseMessage> {
   }
   async create(data: IEmployee): Promise<IResponseMessage> {
     try {
-      const isDuplicate = await Employee.findOne({ email: data.email });
+      const isDuplicate = await Employee.findOne({ email: data.email, isDelete:false });
       if (isDuplicate) {
         throw {
           status: 403,
@@ -68,7 +68,7 @@ class EmployeeModel implements IModel<IEmployee, IResponseMessage> {
   }
   async editOne(id: string, data: IEmployee): Promise<IResponseMessage> {
     try {
-      const isExits = await Employee.findOne({ id });
+      const isExits = await Employee.findOne({ id, isDelete:false });
       if (!isExits) {
         throw {
           status: 401,
@@ -84,7 +84,7 @@ class EmployeeModel implements IModel<IEmployee, IResponseMessage> {
   }
   async deleteOne(id: string, data: IEmployee): Promise<IResponseMessage> {
     try {
-      const isExits = await Employee.findOne({ id });
+      const isExits = await Employee.findOne({ id, isDelete:false });
       if (!isExits) {
         throw {
           status: 401,
@@ -100,7 +100,7 @@ class EmployeeModel implements IModel<IEmployee, IResponseMessage> {
   }
   async login(data: IEmployee): Promise<IEmployee> {
     try {
-      const isValidateEmail = await Employee.findOne({ email: data.email });
+      const isValidateEmail = await Employee.findOne({ email: data.email, isDelete:false });
       if (!isValidateEmail) {
         throw {
           status: 403,
