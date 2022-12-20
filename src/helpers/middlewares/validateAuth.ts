@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   IRequestHandler,
   IResponseHandler,
@@ -20,7 +22,7 @@ const validateAuth = (
   res: IResponseHandler,
   next: INext
 ) => {
-  const token = req.headers.authorization;
+  const token = req.session.token;
   if (!token) {
     throw {
       status: 403,
@@ -29,10 +31,9 @@ const validateAuth = (
     } as IResponseError;
   }
   const desencrypting = jwt.verify(token!, config.SECRET!) as JwtPayload;
+
   if (
-    (desencrypting.role === "employee" && validatePath(req.path, "/create")) ||
-    validatePath(req.path, "/get") ||
-    validatePath(req.path, "/delete")
+    (desencrypting.role === "employee" && (validatePath(req.path, "/create")||validatePath(req.path, "/delete")))
   ) {
     throw {
       status: 403,

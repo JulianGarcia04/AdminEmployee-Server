@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   IRequestHandler,
   IResponseHandler,
@@ -97,11 +99,20 @@ class EmployeeController
       const token = jwt.sign({id:data.id, role: data.role}, config.SECRET!, {
         expiresIn: 60*60*8
       })
+      req.session.token = token;
       res.setHeader('Authorization', token)
       res.status(200).json({status:200, message:"the user is authenticate"} as IResponseMessage)
     } catch (error) {
       next(error);
     }
+  }
+  logout(req: IRequestHandler, res: IResponseHandler, next: INext): Promise<void> {
+      try {
+        req.session.destroy();
+        res.status(200).json({status:200, message:"Hasta luego"})
+      } catch (error) {
+        next(error);
+      }
   }
 }
 
